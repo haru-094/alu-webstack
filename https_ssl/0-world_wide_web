@@ -4,8 +4,7 @@
 audit_subdomain() {
     domain=$1
     subdomain=$2
-    
-    
+      
     dig +noall +answer $subdomain.$domain A | awk -v sub=$subdomain '{ print "The subdomain " sub " is a " $4 " record and points to " $5 }'
 }
 
