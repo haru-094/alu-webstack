@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2086
+
+audit_subdomain() {
+    domain=$1
+    subdomain=$2
+    
+    
+    dig +noall +answer $subdomain.$domain A | awk -v sub=$subdomain '{ print "The subdomain " sub " is a " $4 " record and points to " $5 }'
+}
+
+if [ $# -eq 1 ]; then
+    audit_subdomain $1 www
+    audit_subdomain $1 lb-01
+    audit_subdomain $1 web-01
+    audit_subdomain $1 web-02
+elif [ $# -ge 2 ]; then
+    audit_subdomain $1 $2
+fi

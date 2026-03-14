@@ -1,0 +1,32 @@
+global
+    log /dev/log local0
+    log /dev/log local1 notice
+    chroot /var/lib/haproxy
+    stats socket /run/haproxy/admin.sock mode 660 level admin expose-fd listeners
+    stats timeout 30s
+    user haproxy
+    group haproxy
+    daemon
+    tune.ssl.default-dh-param 2048
+
+defaults
+    log     global
+    mode    http
+    option  httplog
+    option  dontlognull
+    timeout connect 5000
+    timeout client  50000
+    timeout server  50000
+
+frontend www-http
+    bind *:80
+    http-request redirect scheme https code 301
+
+frontend www-https
+    bind *:443 ssl crt /etc/haproxy/certs/www.anas-khalid.tech.pem
+    default_backend web-servers
+
+backend web-servers
+    balance roundrobin
+    server web-01 34.205.72.228:80 check
+    server web-02 54.165.198.141:80 check
